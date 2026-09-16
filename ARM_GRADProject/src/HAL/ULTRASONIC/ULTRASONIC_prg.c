@@ -92,7 +92,7 @@ static u8 HULTRASONIC_u8WaitEchoHigh(void)
             ULTRASONIC_CPU_FREQ_MHZ;
 
 
-    while(MGPIO_u8GetPinVal(
+    while(MGPIO_u8GetPinValue(
             ULTRASONIC_ECHO_PORT,
             ULTRASONIC_ECHO_PIN) == 0)
     {
@@ -122,7 +122,7 @@ static u8 HULTRASONIC_u8WaitEchoLow(void)
             ULTRASONIC_CPU_FREQ_MHZ;
 
 
-    while(MGPIO_u8GetPinVal(
+    while(MGPIO_u8GetPinValue(
             ULTRASONIC_ECHO_PORT,
             ULTRASONIC_ECHO_PIN) == 1)
     {
@@ -182,7 +182,7 @@ void HULTRASONIC_vInit(void)
 
     /* TRIG initially LOW */
 
-    MGPIO_vSetPinVal(
+    MGPIO_vSetPinValue(
             ULTRASONIC_TRIG_PORT,
             ULTRASONIC_TRIG_PIN,
             GPIO_LOW);
@@ -208,7 +208,7 @@ u32 HULTRASONIC_u32GetDistanceCm(void)
     /* Make sure ECHO is LOW                       */
     /*----------------------------------------------*/
 
-    if(MGPIO_u8GetPinVal(
+    if(MGPIO_u8GetPinValue(
             ULTRASONIC_ECHO_PORT,
             ULTRASONIC_ECHO_PIN) == 1)
     {
@@ -220,7 +220,7 @@ u32 HULTRASONIC_u32GetDistanceCm(void)
     /* Send trigger pulse                          */
     /*----------------------------------------------*/
 
-    MGPIO_vSetPinVal(
+    MGPIO_vSetPinValue(
             ULTRASONIC_TRIG_PORT,
             ULTRASONIC_TRIG_PIN,
             GPIO_LOW);
@@ -228,14 +228,14 @@ u32 HULTRASONIC_u32GetDistanceCm(void)
     HULTRASONIC_vDelay_us(2);
 
 
-    MGPIO_vSetPinVal(
+    MGPIO_vSetPinValue(
             ULTRASONIC_TRIG_PORT,
             ULTRASONIC_TRIG_PIN,
             GPIO_HIGH);
 
     HULTRASONIC_vDelay_us(10);
 
-    MGPIO_vSetPinVal(
+    MGPIO_vSetPinValue(
             ULTRASONIC_TRIG_PORT,
             ULTRASONIC_TRIG_PIN,
             GPIO_LOW);

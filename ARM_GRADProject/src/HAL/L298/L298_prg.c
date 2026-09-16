@@ -95,8 +95,8 @@ void HL298_vInit(void)
     L_xPinConfig.Port = M1_IN1_PORT;
     L_xPinConfig.Pin = M1_IN1_PIN;
     L_xPinConfig.Mode = GPIO_MODE_OUTPUT;
-    L_xPinConfig.Speed = GPIO_LOW;
-    L_xPinConfig.OutputType = GPIO_MODE_INPUT;
+    L_xPinConfig.Speed = GPIO_SPEED_LOW;
+    L_xPinConfig.OutputType = GPIO_OT_PUSHPULL;
     L_xPinConfig.PullType = GPIO_NO_PULL;
 
     MGPIO_vPinInit(&L_xPinConfig);
@@ -138,6 +138,20 @@ void HL298_vInit(void)
     L_xPinConfig.Pin = M4_IN2_PIN;
     MGPIO_vPinInit(&L_xPinConfig);
 
+    L_xPinConfig.Port = M1_EN_PORT;
+    L_xPinConfig.Pin = M1_EN_PIN;
+    MGPIO_vPinInit(&L_xPinConfig);
+
+    L_xPinConfig.Pin = M2_EN_PIN;
+    MGPIO_vPinInit(&L_xPinConfig);
+
+    L_xPinConfig.Port = M3_EN_PORT;
+    L_xPinConfig.Pin = M3_EN_PIN;
+    MGPIO_vPinInit(&L_xPinConfig);
+
+    L_xPinConfig.Pin = M4_EN_PIN;
+    MGPIO_vPinInit(&L_xPinConfig);
+
 
     /* Stop motors initially */
     HL298_vStop();
@@ -150,47 +164,33 @@ void HL298_vInit(void)
 
 void HL298_vSetMotorSpeed(u8 A_u8Motor, u8 A_u8Speed)
 {
-    /*
-     * This part depends on your PWM driver.
-     *
-     * For example:
-     *
-     * MPWM_vSetDutyCycle(TIMER_x, CHANNEL_x, A_u8Speed);
-     *
-     * Replace the following cases with your PWM functions.
-     */
-
     switch(A_u8Motor)
     {
         case MOTOR1:
 
-            /* PWM Motor 1 ENA */
-            /* MPWM_vSetDutyCycle(..., A_u8Speed); */
-
+            MGPIO_vSetPinValue(M1_EN_PORT, M1_EN_PIN,
+                               (A_u8Speed > 0) ? GPIO_HIGH : GPIO_LOW);
             break;
 
 
         case MOTOR2:
 
-            /* PWM Motor 2 ENA */
-            /* MPWM_vSetDutyCycle(..., A_u8Speed); */
-
+            MGPIO_vSetPinValue(M2_EN_PORT, M2_EN_PIN,
+                               (A_u8Speed > 0) ? GPIO_HIGH : GPIO_LOW);
             break;
 
 
         case MOTOR3:
 
-            /* PWM Motor 3 ENB */
-            /* MPWM_vSetDutyCycle(..., A_u8Speed); */
-
+            MGPIO_vSetPinValue(M3_EN_PORT, M3_EN_PIN,
+                               (A_u8Speed > 0) ? GPIO_HIGH : GPIO_LOW);
             break;
 
 
         case MOTOR4:
 
-            /* PWM Motor 4 ENB */
-            /* MPWM_vSetDutyCycle(..., A_u8Speed); */
-
+            MGPIO_vSetPinValue(M4_EN_PORT, M4_EN_PIN,
+                               (A_u8Speed > 0) ? GPIO_HIGH : GPIO_LOW);
             break;
 
 
