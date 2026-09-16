@@ -6,7 +6,7 @@
 #include "../HAL/blutooth/blutooth_int.h"
 #include "../HAL/L298/L298_int.h"
 
-#include "../APP/REMOTE_XY/REMOTE_XY_int.h"
+#include "../HAL/REMOTE_XY/REMOTE_XY_int.h"
 
 int main(void)
 {
