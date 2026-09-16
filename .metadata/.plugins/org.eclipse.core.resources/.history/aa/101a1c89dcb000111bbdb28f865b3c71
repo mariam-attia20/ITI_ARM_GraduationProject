@@ -1,0 +1,80 @@
+/*
+ * BLUETOOTH_prg.c
+ *
+ * Created on: Sep 15, 2026
+ * Author: LQ
+ */
+
+
+#include "../../LIB/STD_TYPES.h"
+#include "../../LIB/BIT_MATH.h"
+
+#include "../../MCAL/USART/USART_int.h"
+
+#include "BLUETOOTH_int.h"
+
+
+/*
+ * Function: HBLUETOOTH_vInit
+ * Description:
+ * Initialize the USART used for Bluetooth communication.
+ */
+void HBLUETOOTH_vInit(void)
+{
+    MUSART_vInit();
+}
+
+
+/*
+ * Function: HBLUETOOTH_vSendChar
+ * Description:
+ * Send one character through Bluetooth.
+ */
+void HBLUETOOTH_vSendChar(u8 A_u8Data)
+{
+    MUSART_vTransmit(A_u8Data);
+}
+
+
+/*
+ * Function: HBLUETOOTH_vSendString
+ * Description:
+ * Send a complete string through Bluetooth.
+ */
+void HBLUETOOTH_vSendString(const u8 *A_u8String)
+{
+    u8 L_u8Index = 0;
+
+    while(A_u8String[L_u8Index] != '\0')
+    {
+        HBLUETOOTH_vSendChar(A_u8String[L_u8Index]);
+
+        L_u8Index++;
+    }
+}
+
+
+/*
+ * Function: HBLUETOOTH_u8ReceiveChar
+ * Description:
+ * Receive one character from Bluetooth.
+ */
+u8 HBLUETOOTH_u8ReceiveChar(void)
+{
+    return MUSART_u8Receive();
+}
+
+
+/*
+ * Function: HBLUETOOTH_u8DataAvailable
+ * Description:
+ * Check whether a character has been received.
+ *
+ * Return:
+ * 1 -> Data available
+ * 0 -> No data available
+ */
+u8 HBLUETOOTH_u8DataAvailable(void)
+{
+    return MUSART_u8ReceiveStatus();
+}

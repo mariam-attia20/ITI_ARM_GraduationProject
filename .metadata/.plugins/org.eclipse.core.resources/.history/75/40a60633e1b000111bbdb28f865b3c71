@@ -1,0 +1,32 @@
+#include "../LIB/STD_TYPES.h"
+#include "../LIB/BIT_MATH.h"
+
+#include "../MCAL/RCC/RCC_int.h"
+#include "../HAL/blutooth/blutooth_int.h"
+
+
+int main(void)
+{
+    /* Initialize RCC */
+    MRCC_vInit();
+
+    /* Initialize Bluetooth */
+    HBLUETOOTH_vInit();
+
+    /* Send message */
+    HBLUETOOTH_vSendString((u8*)"Bluetooth Ready\r\n");
+
+
+    while(1)
+    {
+        if(HBLUETOOTH_u8DataAvailable())
+        {
+            u8 L_u8Data;
+
+            L_u8Data = HBLUETOOTH_u8ReceiveChar();
+
+            /* Echo received character */
+            HBLUETOOTH_vSendChar(L_u8Data);
+        }
+    }
+}

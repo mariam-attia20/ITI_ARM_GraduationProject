@@ -1,0 +1,78 @@
+/*
+ * BLUETOOTH_prg.c
+ *
+ * Created on: Sep 15, 2026
+ * Author: LQ
+ */
+
+
+#include "../../LIB/STD_TYPES.h"
+#include "../../LIB/BIT_MATH.h"
+
+#include "../../MCAL/USART/USART_int.h"
+
+#include "BLUETOOTH_int.h"
+
+
+/* =========================================================
+ * Bluetooth Initialization
+ * ========================================================= */
+
+void HBLUETOOTH_vInit(void)
+{
+    /*
+     * Initialize USART1
+     *
+     * HC-05 is connected to USART1
+     */
+    MUSART_vInit();
+}
+
+
+/* =========================================================
+ * Send Character
+ * ========================================================= */
+
+void HBLUETOOTH_vSendChar(u8 A_u8Data)
+{
+    MUSART_vSendData(A_u8Data);
+}
+
+
+/* =========================================================
+ * Send String
+ * ========================================================= */
+
+void HBLUETOOTH_vSendString(const u8 *A_u8String)
+{
+    u8 L_u8Index = 0;
+
+    while(A_u8String[L_u8Index] != '\0')
+    {
+        HBLUETOOTH_vSendChar(A_u8String[L_u8Index]);
+
+        L_u8Index++;
+    }
+}
+
+
+/* =========================================================
+ * Receive Character
+ * ========================================================= */
+
+u8 HBLUETOOTH_u8ReceiveChar(void)
+{
+    return MUSART_u8ReceiveData();
+}
+
+
+/* =========================================================
+ * Check if Data is Available
+ * ========================================================= */
+
+u8 HBLUETOOTH_u8DataAvailable(void)
+{
+    u8 L_u8Data;
+
+    return MUSART_vReceive_synch(&L_u8Data);
+}

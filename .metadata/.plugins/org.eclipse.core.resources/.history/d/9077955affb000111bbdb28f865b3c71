@@ -1,0 +1,82 @@
+#include "../LIB/STD_TYPES.h"
+#include "../LIB/BIT_MATH.h"
+
+#include "../MCAL/RCC/RCC_int.h"
+
+#include "../HAL/blutooth/blutooth_int.h"
+#include "../HAL/L298/L298_int.h"
+
+#include "../APP/REMOTE_XY/REMOTE_XY_int.h"
+
+
+int main(void)
+{
+    MRCC_vInit();
+
+    HBLUETOOTH_vInit();
+
+    HL298_vInit();
+
+    APP_RemoteXY_vInit();
+
+
+    while(1)
+    {
+        RobotDirection_t L_xDirection;
+        u8 L_u8Speed;
+
+
+        /* Update RemoteXY */
+        APP_RemoteXY_vUpdate();
+
+
+        /* Get direction */
+        L_xDirection = APP_RemoteXY_u8GetDirection();
+
+
+        /* Get speed */
+        L_u8Speed = APP_RemoteXY_u8GetSpeed();
+
+
+        /* Control robot */
+
+        switch(L_xDirection)
+        {
+            case ROBOT_FORWARD:
+
+                HL298_vMove(MOVE_FORWARD, L_u8Speed);
+
+                break;
+
+
+            case ROBOT_BACKWARD:
+
+                HL298_vMove(MOVE_BACKWARD, L_u8Speed);
+
+                break;
+
+
+            case ROBOT_LEFT:
+
+                HL298_vMove(MOVE_LEFT, L_u8Speed);
+
+                break;
+
+
+            case ROBOT_RIGHT:
+
+                HL298_vMove(MOVE_RIGHT, L_u8Speed);
+
+                break;
+
+
+            case ROBOT_STOP:
+
+            default:
+
+                HL298_vStop();
+
+                break;
+        }
+    }
+}

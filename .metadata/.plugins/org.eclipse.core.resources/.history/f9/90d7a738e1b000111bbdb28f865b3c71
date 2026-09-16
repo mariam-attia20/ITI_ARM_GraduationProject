@@ -1,0 +1,33 @@
+#include "../LIB/STD_TYPES.h"
+#include "../LIB/BIT_MATH.h"
+
+#include "../MCAL/RCC/RCC_int.h"
+#include "../HAL/BLUETOOTH/BLUETOOTH_int.h"
+
+int main(void)
+{
+    /* Initialize RCC */
+    MRCC_vInit();
+
+    /* Initialize Bluetooth */
+    HBLUETOOTH_vInit();
+
+    /* Send message to Bluetooth */
+    HBLUETOOTH_vSendString((u8*)"Bluetooth Ready\r\n");
+
+    while(1)
+    {
+        u8 L_u8Data;
+
+        /*
+         * Check if a character was received.
+         * If received, the function stores it in L_u8Data
+         * and returns 1.
+         */
+        if(HBLUETOOTH_u8ReceiveSynch(&L_u8Data))
+        {
+            /* Echo the received character */
+            HBLUETOOTH_vSendChar(L_u8Data);
+        }
+    }
+}

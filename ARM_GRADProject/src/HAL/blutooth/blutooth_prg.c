@@ -1,32 +1,24 @@
-/*
- * BLUETOOTH_prg.c
- *
- * Created on: Sep 15, 2026
- * Author: LQ
- */
-
 #include "../../LIB/STD_TYPES.h"
 #include "../../LIB/BIT_MATH.h"
 
 #include "../../MCAL/USART/USART_int.h"
 
-#include "BLUETOOTH_int.h"
+#include "blutooth_int.h"
 
 
 void HBLUETOOTH_vInit(void)
 {
-    /* Initialize USART used with Bluetooth module */
     MUSART_vInit();
 }
 
 
 void HBLUETOOTH_vSendChar(u8 A_u8Data)
 {
-    MUSART_vTransmit(A_u8Data);
+    MUSART_vSendData(A_u8Data);
 }
 
 
-void HBLUETOOTH_vSendString(const u8 A_u8String[])
+void HBLUETOOTH_vSendString(const u8 *A_u8String)
 {
     u8 L_u8Index = 0;
 
@@ -41,11 +33,11 @@ void HBLUETOOTH_vSendString(const u8 A_u8String[])
 
 u8 HBLUETOOTH_u8ReceiveChar(void)
 {
-    return MUSART_u8Receive();
+    return MUSART_u8ReceiveData();
 }
 
 
-u8 HBLUETOOTH_u8DataAvailable(void)
+u8 HBLUETOOTH_u8ReceiveSynch(u8 *A_pu8Data)
 {
-    return MUSART_u8ReceiveStatus();
+    return MUSART_vReceive_synch(A_pu8Data);
 }

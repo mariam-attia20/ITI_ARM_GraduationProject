@@ -1,0 +1,28 @@
+#ifndef BLUETOOTH_INT_H_
+#define BLUETOOTH_INT_H_
+
+#include "../../LIB/BIT_MATH.h"
+#include "../../LIB/STD_TYPES.h"
+
+
+/* Bluetooth Initialization */
+void HBLUETOOTH_vInit(void);
+
+
+/* Send one character */
+void HBLUETOOTH_vSendChar(u8 A_u8Data);
+
+
+/* Send a string */
+void HBLUETOOTH_vSendString(const u8 *A_u8String);
+
+
+/* Receive one character */
+u8 HBLUETOOTH_u8ReceiveChar(void);
+
+
+/* Check if data is available */
+u8 HBLUETOOTH_u8DataAvailable(void);
+
+
+#endif /* BLUETOOTH_INT_H_ */

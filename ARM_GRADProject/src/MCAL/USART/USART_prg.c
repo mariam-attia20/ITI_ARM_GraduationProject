@@ -1,12 +1,3 @@
-/*
- * USART_prg.c
- *
- *  Created on: Aug 30, 2026
- *      Author: Hager Adel
- */
-
-
-
 #include "../../LIB/STD_TYPES.h"
 #include "../../LIB/BIT_MATH.h"
 
@@ -14,189 +5,147 @@
 #include "USART_prv.h"
 
 
-u8* G_pu8TxBuffer = NULL;
-u8  G_u8TxLength  = 0;
-u8  G_u8TxIndex   = 0;
-
-u8 G_Buffer[50];
-void (*G_Fpt[3])(void)={NULL};
-// G_Fpt[0] -> USART1
-// G_Fpt[1] -> USART2
-// G_Fpt[2] -> USART6
 void MUSART_vInit(void)
 {
-	// oversample by 16
-	CLR_BIT(USART1->CR1, 15);
+    /*
+     * USART1
+     *
+     * 8 Data bits
+     * No parity
+     * 1 Stop bit
+     * 9600 Baud
+     */
 
-	// word length 8 data
-	CLR_BIT(USART1->CR1, 12);
+    /* Oversampling by 16 */
+    CLR_BIT(USART1->CR1, 15);
 
-	// no parity
-	CLR_BIT(USART1->CR1, 10);
+    /* 8 Data bits */
+    CLR_BIT(USART1->CR1, 12);
 
-	// baudrate 9600
-	USART1->BRR = 162<<4 | 13;
+    /* No parity */
+    CLR_BIT(USART1->CR1, 10);
 
-	// 1 stop bit
-	CLR_BIT(USART1->CR2, 12);
-	CLR_BIT(USART1->CR2, 13);
+    /*
+     * 9600 Baud
+     *
+     * This value assumes the USART1 clock
+     * is configured appropriately.
+     */
+    USART1->BRR = (162 << 4) | 13;
 
-	// Enable transmit
-	SET_BIT(USART1->CR1, 3);
+    /* 1 Stop bit */
+    CLR_BIT(USART1->CR2, 12);
+    CLR_BIT(USART1->CR2, 13);
 
-	// Enable Receive
-	SET_BIT(USART1->CR1, 2);
+    /* Enable Transmitter */
+    SET_BIT(USART1->CR1, 3);
 
-	// enable usart
-	SET_BIT(USART1->CR1, 13);
+    /* Enable Receiver */
+    SET_BIT(USART1->CR1, 2);
 
+    /* Enable USART1 */
+    SET_BIT(USART1->CR1, 13);
 }
 
-u8  MUSART_vReceive_synch(u8* A_pu8Byte)
+
+u8 MUSART_vReceive_synch(u8 *A_pu8Byte)
 {
-	u8 L_u8status = 1 ;
-	if( GET_BIT(USART1->SR, 5) == 1 )
-	{
-		*A_pu8Byte = USART1->DR ;
-	}
-	else
-	{
-		L_u8status = 0;
-	}
+    if(GET_BIT(USART1->SR, 5))
+    {
+        *A_pu8Byte = (u8)USART1->DR;
 
-	return L_u8status ;
+        return 1;
+    }
+
+    return 0;
 }
-void MUSART_vEnable_TX_Interrupt(void)
-{
-	SET_BIT(USART1->CR1,7);
-}
-void MUSART_vDisable_TX_Interrupt(void)
-{
-	CLR_BIT(USART1->CR1,7);
-}
-void MUSART_vEnable_TC_Interrupt(void)
-{
-	SET_BIT(USART1->CR1,6);
-}
-void MUSART_vDisable_TC_Interrupt(void)
-{
-	CLR_BIT(USART1->CR1,6);
-}
-void MUSART_vEnable_RX_Interrupt(void)
-{
-	SET_BIT(USART1->CR1,5);
-}
-void MUSART_vDisable_RX_Interrupt(void)
-{
-	CLR_BIT(USART1->CR1,5);
-}
+
+
 void MUSART_vSendData(u8 A_u8Data)
 {
-	/* Check whether register empty or not */
-	while(!GET_BIT(USART1->SR,7))
-		;
-	USART1->DR = A_u8Data;
+    /* Wait until transmit data register is empty */
+    while(!GET_BIT(USART1->SR, 7))
+    {
+    }
 
-	/* Wait until data is transmitted */
-	while(!GET_BIT(USART1->SR,6))
-		;
-	/* clear TC bit */
-	CLR_BIT(USART1->SR, 6);
+    USART1->DR = A_u8Data;
+
+    /* Wait until transmission is complete */
+    while(!GET_BIT(USART1->SR, 6))
+    {
+    }
+
+    /* Clear TC */
+    CLR_BIT(USART1->SR, 6);
 }
-u8   MUSART_u8ReceiveData()
+
+
+u8 MUSART_u8ReceiveData(void)
 {
-	while(!GET_BIT(USART1->SR,5))
-		;
+    while(!GET_BIT(USART1->SR, 5))
+    {
+    }
 
-	return USART1->DR;
+    return (u8)USART1->DR;
 }
-void MUSART_vSendString(char* A_u8ptrStr)
+
+
+void MUSART_vSendString(u8 *A_u8String)
 {
-	u8 L_u8Index = 0;
-	while(A_u8ptrStr[L_u8Index]!='\0')
-		MUSART_vSendData(A_u8ptrStr[L_u8Index++]);
+    u8 L_u8Index = 0;
 
+    while(A_u8String[L_u8Index] != '\0')
+    {
+        MUSART_vSendData(A_u8String[L_u8Index]);
+
+        L_u8Index++;
+    }
 }
-u8*  MUSART_u8ptrReceiveString(void) // check '\r' | '\n'
+
+
+u8 MUSART_u8Retreive_USART1_DataRegister(void)
 {
-	u8 L_u8index = 0;
-	// carrige return
-	u8 ch ;
-
-	while((ch = MUSART_u8ReceiveData()) != '\r' && ch != '\n')
-	{
-		G_Buffer[L_u8index] = ch;
-		L_u8index++;
-	}
-	G_Buffer[L_u8index] = '\0';
-	return G_Buffer;
+    return (u8)USART1->DR;
 }
 
-void MUSART_vUSARTCallBack(u8 A_u8USARTNo, void(*Fptr)(void))
-{
-	// G_Fpt[0] -> USART1
-	// G_Fpt[1] -> USART2
-	// G_Fpt[2] -> USART6
-	u8 L_u8index = (A_u8USARTNo==1)?0:(A_u8USARTNo==2)?1:2;
-	G_Fpt[L_u8index] = Fptr;
-}
+
 void MUSART_vWrite_USART1_DataRegister(u8 A_u8Data)
 {
-	USART1->DR = A_u8Data;
+    USART1->DR = A_u8Data;
 }
-u8   MUSART_u8Retreive_USART1_DataRegister(void)
+
+
+void MUSART_vEnable_TX_Interrupt(void)
 {
-	return USART1->DR;
+    SET_BIT(USART1->CR1, 7);
 }
 
-void MUSART_vSendStringAsynch(u8* A_pu8String, u8 A_u8Length)
+
+void MUSART_vDisable_TX_Interrupt(void)
 {
-	/* Pass the string data to the global variables */
-	G_pu8TxBuffer = A_pu8String;
-	G_u8TxLength  = A_u8Length;
-	G_u8TxIndex   = 0; // Start at the first character
-
-	/* Enable the interrupt to begin transmission */
-	MUSART_vEnable_TX_Interrupt();
+    CLR_BIT(USART1->CR1, 7);
 }
 
-void USART1_IRQHandler(void)
+
+void MUSART_vEnable_TC_Interrupt(void)
 {
-	/* Check whether register empty or not */
-	if((GET_BIT(USART1->SR,7) == 1) && (GET_BIT(USART1->CR1, 7) == 1))
-	{
-		if(G_u8TxIndex < G_u8TxLength)
-		{
-			USART1->DR = G_pu8TxBuffer[G_u8TxIndex];
-			G_u8TxIndex++;
-		}else
-		{
-			MUSART_vDisable_TX_Interrupt();
-			MUSART_vEnable_TC_Interrupt();
-		}
-	}
-
-	/* Wait until data is transmitted */
-	if((GET_BIT(USART1->SR,6) == 1) && (GET_BIT(USART1->CR1, 6) == 1))
-	{
-		/* Clear TC bit */
-		CLR_BIT(USART1->SR, 6);
-		MUSART_vDisable_TC_Interrupt();
-	}
-
+    SET_BIT(USART1->CR1, 6);
 }
 
-// void USART1_IRQHandler(void)
-// {
-// 	// TC interrupt
-// 	if(GET_BIT(USART1->SR, 6))
-// 	{
-// 		// clear TC
-// 		CLR_BIT(USART1->SR, 6);
-// 		if(G_Fpt[0] != NULL) G_Fpt[0]();
 
-// 	}else{
-// 		if(G_Fpt[0] != NULL) G_Fpt[0]();
-// 	}
+void MUSART_vDisable_TC_Interrupt(void)
+{
+    CLR_BIT(USART1->CR1, 6);
+}
 
-// }
+
+void MUSART_vEnable_RX_Interrupt(void)
+{
+    SET_BIT(USART1->CR1, 5);
+}
+
+
+void MUSART_vDisable_RX_Interrupt(void)
+{
+    CLR_BIT(USART1->CR1, 5);
+}

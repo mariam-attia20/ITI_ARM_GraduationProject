@@ -1,0 +1,146 @@
+/*
+ * REMOTEXY_prg.c
+ *
+ * Created on: Sep 15, 2026
+ * Author: LQ
+ */
+
+#include "../../LIB/STD_TYPES.h"
+#include "../../LIB/BIT_MATH.h"
+
+#include "../../HAL/BLUETOOTH/BLUETOOTH_int.h"
+
+#include "REMOTEXY_int.h"
+
+
+/* =========================================================
+ * RemoteXY variables
+ * These will be updated from the RemoteXY communication code.
+ * =========================================================
+ */
+
+static s8 G_s8JoystickX = 0;
+static s8 G_s8JoystickY = 0;
+
+static u8 G_u8Speed = 0;
+
+static u8 G_u8Stop = 0;
+
+
+/* =========================================================
+ * Initialize RemoteXY
+ * =========================================================
+ */
+
+void APP_RemoteXY_vInit(void)
+{
+    /*
+     * Initialize Bluetooth / HC-05
+     */
+    HBLUETOOTH_vInit();
+
+    /*
+     * Default values
+     */
+    G_s8JoystickX = 0;
+    G_s8JoystickY = 0;
+
+    G_u8Speed = 0;
+
+    G_u8Stop = 1;
+}
+
+
+/* =========================================================
+ * Update RemoteXY
+ * =========================================================
+ */
+
+void APP_RemoteXY_vUpdate(void)
+{
+    /*
+     * This function should update:
+     *
+     * G_s8JoystickX
+     * G_s8JoystickY
+     * G_u8Speed
+     * G_u8Stop
+     *
+     * from the RemoteXY-generated communication code.
+     *
+     * The exact code depends on the RemoteXY GUI.
+     */
+}
+
+
+/* =========================================================
+ * Get Robot Direction
+ * =========================================================
+ */
+
+RobotDirection_t APP_RemoteXY_u8GetDirection(void)
+{
+    /*
+     * Stop button pressed
+     */
+    if(G_u8Stop == 1)
+    {
+        return ROBOT_STOP;
+    }
+
+
+    /*
+     * Joystick Forward
+     */
+    if(G_s8JoystickY > 50)
+    {
+        return ROBOT_FORWARD;
+    }
+
+
+    /*
+     * Joystick Backward
+     */
+    else if(G_s8JoystickY < -50)
+    {
+        return ROBOT_BACKWARD;
+    }
+
+
+    /*
+     * Joystick Right
+     */
+    else if(G_s8JoystickX > 50)
+    {
+        return ROBOT_RIGHT;
+    }
+
+
+    /*
+     * Joystick Left
+     */
+    else if(G_s8JoystickX < -50)
+    {
+        return ROBOT_LEFT;
+    }
+
+
+    /*
+     * Joystick in center
+     */
+    else
+    {
+        return ROBOT_STOP;
+    }
+}
+
+
+/* =========================================================
+ * Get Speed
+ * =========================================================
+ */
+
+u8 APP_RemoteXY_u8GetSpeed(void)
+{
+    return G_u8Speed;
+}

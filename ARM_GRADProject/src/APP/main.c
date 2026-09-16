@@ -2,24 +2,27 @@
 #include "../LIB/BIT_MATH.h"
 
 #include "../MCAL/RCC/RCC_int.h"
-#include "../MCAL/GPIO/GPIO_int.h"
-#include "../MCAL/Flash/Flash_int.h"
-void main(){
-	MRCC_vInit();
-    MRCC_vEnableClk(RCC_APB2, RCC_GPIOA);
-    GPIOx_PinConfig_t LED={
-    				.Port = GPIO_PORTA,
-    				.Pin = GPIO_PIN0 ,
-    				.Mode =  GPIO_MODE_OUTPUT ,
-    				.Speed = GPIO_SPEED_LOW ,
-    				.OutputType = GPIO_OT_PUSHPULL,
-    				.PullType = GPIO_NO_PULL ,
-    	    };
-    MGPIO_vPinInit(&LED);
-    MGPIO_vSetPinValue(GPIO_PORTA, GPIO_PIN0 , GPIO_HIGH);
+
+#include "../HAL/blutooth/blutooth_int.h"
+#include "../HAL/L298/L298_int.h"
+
+#include "../APP/REMOTE_XY/REMOTE_XY_int.h"
+
+int main(void)
+{
+    u8 L_u8Data;
+
+    MRCC_vInit();
+
+    HBLUETOOTH_vInit();
+
+    HBLUETOOTH_vSendString((u8*)"TEST\r\n");
 
     while(1)
     {
-
+        if(HBLUETOOTH_u8ReceiveSynch(&L_u8Data))
+        {
+            HBLUETOOTH_vSendChar(L_u8Data);
+        }
     }
 }

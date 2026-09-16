@@ -1,0 +1,352 @@
+/*
+ * L298_prg.c
+ *
+ * Created on: 7 Sep 2026
+ * Author: LOQ
+ */
+
+#include "../../LIB/BIT_MATH.h"
+#include "../../LIB/STD_TYPES.h"
+
+#include "../../MCAL/GPIO/GPIO_int.h"
+
+#include "L298_cfg.h"
+#include "L298_int.h"
+
+
+/* =========================================================
+ * Motor 1
+ * ========================================================= */
+
+static void HL298_vMotor1Forward(void)
+{
+    MGPIO_vSetPinValue(M1_IN1_PORT, M1_IN1_PIN, GPIO_HIGH);
+    MGPIO_vSetPinValue(M1_IN2_PORT, M1_IN2_PIN, GPIO_LOW);
+}
+
+static void HL298_vMotor1Backward(void)
+{
+    MGPIO_vSetPinValue(M1_IN1_PORT, M1_IN1_PIN, GPIO_LOW);
+    MGPIO_vSetPinValue(M1_IN2_PORT, M1_IN2_PIN, GPIO_HIGH);
+}
+
+
+/* =========================================================
+ * Motor 2
+ * ========================================================= */
+
+static void HL298_vMotor2Forward(void)
+{
+    MGPIO_vSetPinValue(M2_IN1_PORT, M2_IN1_PIN, GPIO_HIGH);
+    MGPIO_vSetPinValue(M2_IN2_PORT, M2_IN2_PIN, GPIO_LOW);
+}
+
+static void HL298_vMotor2Backward(void)
+{
+    MGPIO_vSetPinValue(M2_IN1_PORT, M2_IN1_PIN, GPIO_LOW);
+    MGPIO_vSetPinValue(M2_IN2_PORT, M2_IN2_PIN, GPIO_HIGH);
+}
+
+
+/* =========================================================
+ * Motor 3
+ * ========================================================= */
+
+static void HL298_vMotor3Forward(void)
+{
+    MGPIO_vSetPinValue(M3_IN1_PORT, M3_IN1_PIN, GPIO_HIGH);
+    MGPIO_vSetPinValue(M3_IN2_PORT, M3_IN2_PIN, GPIO_LOW);
+}
+
+static void HL298_vMotor3Backward(void)
+{
+    MGPIO_vSetPinValue(M3_IN1_PORT, M3_IN1_PIN, GPIO_LOW);
+    MGPIO_vSetPinValue(M3_IN2_PORT, M3_IN2_PIN, GPIO_HIGH);
+}
+
+
+/* =========================================================
+ * Motor 4
+ * ========================================================= */
+
+static void HL298_vMotor4Forward(void)
+{
+    MGPIO_vSetPinValue(M4_IN1_PORT, M4_IN1_PIN, GPIO_HIGH);
+    MGPIO_vSetPinValue(M4_IN2_PORT, M4_IN2_PIN, GPIO_LOW);
+}
+
+static void HL298_vMotor4Backward(void)
+{
+    MGPIO_vSetPinValue(M4_IN1_PORT, M4_IN1_PIN, GPIO_LOW);
+    MGPIO_vSetPinValue(M4_IN2_PORT, M4_IN2_PIN, GPIO_HIGH);
+}
+
+
+/* =========================================================
+ * Initialization
+ * ========================================================= */
+
+void HL298_vInit(void)
+{
+    GPIOx_PinConfig_t L_xPinConfig;
+
+
+    /* Motor 1 IN1 */
+    L_xPinConfig.Port = M1_IN1_PORT;
+    L_xPinConfig.Pin = M1_IN1_PIN;
+    L_xPinConfig.Mode = GPIO_OUTPUT;
+    L_xPinConfig.Speed = GPIO_LOW;
+    L_xPinConfig.OutputType = GPIO_PUSH_PULL;
+    L_xPinConfig.PullType = GPIO_NO_PULL;
+
+    MGPIO_vPinInit(&L_xPinConfig);
+
+
+    /* Motor 1 IN2 */
+    L_xPinConfig.Pin = M1_IN2_PIN;
+    MGPIO_vPinInit(&L_xPinConfig);
+
+
+    /* Motor 2 IN1 */
+    L_xPinConfig.Pin = M2_IN1_PIN;
+    MGPIO_vPinInit(&L_xPinConfig);
+
+
+    /* Motor 2 IN2 */
+    L_xPinConfig.Pin = M2_IN2_PIN;
+    MGPIO_vPinInit(&L_xPinConfig);
+
+
+    /* Motor 3 IN1 */
+    L_xPinConfig.Port = M3_IN1_PORT;
+    L_xPinConfig.Pin = M3_IN1_PIN;
+    MGPIO_vPinInit(&L_xPinConfig);
+
+
+    /* Motor 3 IN2 */
+    L_xPinConfig.Pin = M3_IN2_PIN;
+    MGPIO_vPinInit(&L_xPinConfig);
+
+
+    /* Motor 4 IN1 */
+    L_xPinConfig.Port = M4_IN1_PORT;
+    L_xPinConfig.Pin = M4_IN1_PIN;
+    MGPIO_vPinInit(&L_xPinConfig);
+
+
+    /* Motor 4 IN2 */
+    L_xPinConfig.Pin = M4_IN2_PIN;
+    MGPIO_vPinInit(&L_xPinConfig);
+
+
+    /* Stop motors initially */
+    HL298_vStop();
+}
+
+
+/* =========================================================
+ * Set Motor Speed
+ * ========================================================= */
+
+void HL298_vSetMotorSpeed(u8 A_u8Motor, u8 A_u8Speed)
+{
+    /*
+     * This part depends on your PWM driver.
+     *
+     * For example:
+     *
+     * MPWM_vSetDutyCycle(TIMER_x, CHANNEL_x, A_u8Speed);
+     *
+     * Replace the following cases with your PWM functions.
+     */
+
+    switch(A_u8Motor)
+    {
+        case MOTOR1:
+
+            /* PWM Motor 1 ENA */
+            /* MPWM_vSetDutyCycle(..., A_u8Speed); */
+
+            break;
+
+
+        case MOTOR2:
+
+            /* PWM Motor 2 ENA */
+            /* MPWM_vSetDutyCycle(..., A_u8Speed); */
+
+            break;
+
+
+        case MOTOR3:
+
+            /* PWM Motor 3 ENB */
+            /* MPWM_vSetDutyCycle(..., A_u8Speed); */
+
+            break;
+
+
+        case MOTOR4:
+
+            /* PWM Motor 4 ENB */
+            /* MPWM_vSetDutyCycle(..., A_u8Speed); */
+
+            break;
+
+
+        default:
+
+            break;
+    }
+}
+
+
+/* =========================================================
+ * Forward
+ * ========================================================= */
+
+void HL298_vMoveForward(u8 A_u8Speed)
+{
+    HL298_vMotor1Forward();
+    HL298_vMotor2Forward();
+    HL298_vMotor3Forward();
+    HL298_vMotor4Forward();
+
+    HL298_vSetMotorSpeed(MOTOR1, A_u8Speed);
+    HL298_vSetMotorSpeed(MOTOR2, A_u8Speed);
+    HL298_vSetMotorSpeed(MOTOR3, A_u8Speed);
+    HL298_vSetMotorSpeed(MOTOR4, A_u8Speed);
+}
+
+
+/* =========================================================
+ * Backward
+ * ========================================================= */
+
+void HL298_vMoveBackward(u8 A_u8Speed)
+{
+    HL298_vMotor1Backward();
+    HL298_vMotor2Backward();
+    HL298_vMotor3Backward();
+    HL298_vMotor4Backward();
+
+    HL298_vSetMotorSpeed(MOTOR1, A_u8Speed);
+    HL298_vSetMotorSpeed(MOTOR2, A_u8Speed);
+    HL298_vSetMotorSpeed(MOTOR3, A_u8Speed);
+    HL298_vSetMotorSpeed(MOTOR4, A_u8Speed);
+}
+
+
+/* =========================================================
+ * Left
+ * ========================================================= */
+
+void HL298_vMoveLeft(u8 A_u8Speed)
+{
+    HL298_vMotor1Backward();
+    HL298_vMotor2Forward();
+
+    HL298_vMotor3Backward();
+    HL298_vMotor4Forward();
+
+    HL298_vSetMotorSpeed(MOTOR1, A_u8Speed);
+    HL298_vSetMotorSpeed(MOTOR2, A_u8Speed);
+    HL298_vSetMotorSpeed(MOTOR3, A_u8Speed);
+    HL298_vSetMotorSpeed(MOTOR4, A_u8Speed);
+}
+
+
+/* =========================================================
+ * Right
+ * ========================================================= */
+
+void HL298_vMoveRight(u8 A_u8Speed)
+{
+    HL298_vMotor1Forward();
+    HL298_vMotor2Backward();
+
+    HL298_vMotor3Forward();
+    HL298_vMotor4Backward();
+
+    HL298_vSetMotorSpeed(MOTOR1, A_u8Speed);
+    HL298_vSetMotorSpeed(MOTOR2, A_u8Speed);
+    HL298_vSetMotorSpeed(MOTOR3, A_u8Speed);
+    HL298_vSetMotorSpeed(MOTOR4, A_u8Speed);
+}
+
+
+/* =========================================================
+ * General Move Function
+ * ========================================================= */
+
+void HL298_vMove(u8 A_u8Direction, u8 A_u8Speed)
+{
+    switch(A_u8Direction)
+    {
+        case MOVE_FORWARD:
+
+            HL298_vMoveForward(A_u8Speed);
+
+            break;
+
+
+        case MOVE_BACKWARD:
+
+            HL298_vMoveBackward(A_u8Speed);
+
+            break;
+
+
+        case MOVE_LEFT:
+
+            HL298_vMoveLeft(A_u8Speed);
+
+            break;
+
+
+        case MOVE_RIGHT:
+
+            HL298_vMoveRight(A_u8Speed);
+
+            break;
+
+
+        case MOVE_STOP:
+
+            HL298_vStop();
+
+            break;
+
+
+        default:
+
+            HL298_vStop();
+
+            break;
+    }
+}
+
+
+/* =========================================================
+ * Stop
+ * ========================================================= */
+
+void HL298_vStop(void)
+{
+    MGPIO_vSetPinValue(M1_IN1_PORT, M1_IN1_PIN, GPIO_LOW);
+    MGPIO_vSetPinValue(M1_IN2_PORT, M1_IN2_PIN, GPIO_LOW);
+
+    MGPIO_vSetPinValue(M2_IN1_PORT, M2_IN1_PIN, GPIO_LOW);
+    MGPIO_vSetPinValue(M2_IN2_PORT, M2_IN2_PIN, GPIO_LOW);
+
+    MGPIO_vSetPinValue(M3_IN1_PORT, M3_IN1_PIN, GPIO_LOW);
+    MGPIO_vSetPinValue(M3_IN2_PORT, M3_IN2_PIN, GPIO_LOW);
+
+    MGPIO_vSetPinValue(M4_IN1_PORT, M4_IN1_PIN, GPIO_LOW);
+    MGPIO_vSetPinValue(M4_IN2_PORT, M4_IN2_PIN, GPIO_LOW);
+
+    HL298_vSetMotorSpeed(MOTOR1, 0);
+    HL298_vSetMotorSpeed(MOTOR2, 0);
+    HL298_vSetMotorSpeed(MOTOR3, 0);
+    HL298_vSetMotorSpeed(MOTOR4, 0);
+}
