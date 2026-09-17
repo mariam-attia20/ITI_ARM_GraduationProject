@@ -5,14 +5,7 @@
 #ifndef HAL_ULTRASONIC_ULTRASONIC_CFG_H_
 #define HAL_ULTRASONIC_ULTRASONIC_CFG_H_
 
-/* Ultrasonic pins */
-
-#define ULTRASONIC_TRIG_PORT     GPIO_PORTB
-#define ULTRASONIC_TRIG_PIN      GPIO_PIN8
-
-#define ULTRASONIC_ECHO_PORT     GPIO_PORTB
-#define ULTRASONIC_ECHO_PIN      GPIO_PIN9
-
+#include "../../CONFIG/PinConfig.h"
 
 /*
  * STM32F401 system clock
